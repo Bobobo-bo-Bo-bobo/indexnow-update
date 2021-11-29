@@ -1,6 +1,6 @@
 [package]
 name = "indexnow-update"
-version = "0.1.0-20211128"
+version = "0.1.0-20211129"
 authors = ["Andreas Maus <maus@ypbind.de>"]
 edition = "2018"
 
@@ -11,9 +11,10 @@ chrono = "0.4"
 fern = "0.6"
 getopts = "0.2"
 log = "0.4"
-reusqlite = "0.26"
+rusqlite = "0.26"
 serde = { version = "1.0", features = ["derive"] }
 serde_yaml = "0.8"
+sha2 = "0.9"
 simple-error = "0.2"
 walkdir = "2"
 

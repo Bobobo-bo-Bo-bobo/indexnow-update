@@ -10,6 +10,8 @@ mod config;
 mod constants;
 mod logging;
 mod usage;
+mod scan;
+mod sqlite3;
 
 fn main() {
     let argv: Vec<String> = env::args().collect();
@@ -97,4 +99,12 @@ fn main() {
     };
 
     debug!("Parsed configuration: {:?}", config);
+    debug!("Opening database connection to {}", config.database);
+    let db_handle = match sqlite3::open(&config.database) {
+        Ok(v) => v,
+        Err(e) => {
+            error!("Can't open databse file {}: {}", config.database, e);
+            process::exit(1);
+        }
+    };
 }
