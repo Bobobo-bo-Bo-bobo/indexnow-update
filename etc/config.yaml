@@ -1,0 +1,16 @@
+database: /path/to/sqlite.db
+file_extensions:
+    - 'md'
+    - 'htm'
+    - 'html'
+    - 'txt'
+base_url: https://www.example.com
+engines:
+  bing.com:
+    indexnow_url: https://bing.com/indexnow
+    key_value: <key>
+    key_url: <key>
+  yandex.ru:
+    indexnow_url: https://yandex.ru/indexnow
+    key_value: <key>
+    key_url: <key>
