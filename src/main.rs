@@ -1,6 +1,3 @@
-#[macro_use]
-extern crate simple_error;
-
 use getopts::Options;
 use log::{ debug, error, info };
 use std::env;
