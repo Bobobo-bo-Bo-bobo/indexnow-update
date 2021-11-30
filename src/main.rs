@@ -99,6 +99,14 @@ fn main() {
     };
 
     debug!("Parsed configuration: {:?}", config);
+    let fext_list = match config.file_extensions {
+        Some(v) => v,
+        None => {
+            error!("List of file extensions is empty");
+            process::exit(1);
+        }
+    };
+
     debug!("Opening database connection to {}", config.database);
     let db_handle = match sqlite3::open(&config.database) {
         Ok(v) => v,
@@ -107,4 +115,6 @@ fn main() {
             process::exit(1);
         }
     };
+
+    scan::build_update_list(&html_dir, &db_handle, fext_list);
 }
