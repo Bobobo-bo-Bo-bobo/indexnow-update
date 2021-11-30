@@ -108,7 +108,7 @@ fn main() {
     };
 
     debug!("Opening database connection to {}", config.database);
-    let db_handle = match sqlite3::open(&config.database) {
+    let mut db_handle = match sqlite3::open(&config.database) {
         Ok(v) => v,
         Err(e) => {
             error!("Can't open databse file {}: {}", config.database, e);
@@ -116,5 +116,12 @@ fn main() {
         }
     };
 
-    scan::build_update_list(&html_dir, &db_handle, fext_list);
+    let indexnow = match scan::build_update_list(&html_dir, &mut db_handle, fext_list) {
+        Ok(v) => v,
+        Err(e) => {
+            error!("Unable to build file list: {}", e);
+            process::exit(1);
+        }
+    };
+    println!("> {:?}", indexnow);
 }

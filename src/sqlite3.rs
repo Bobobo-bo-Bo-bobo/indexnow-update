@@ -1,4 +1,5 @@
 use crate::constants;
+use crate::scan;
 use log::info;
 use rusqlite;
 use std::error::Error;
@@ -31,4 +32,23 @@ pub fn file_sha512_from_db(db: &rusqlite::Connection, f: &str) -> Result<String,
     }
     let result: String = db.query_row("SELECT sha512 FROM files WHERE filename=:fname;", &[(":fname", f)], |row| row.get(0))?;
     Ok(result)
+}
+
+pub fn db_update(db: &mut rusqlite::Connection, ins: Vec<scan::Filehash>, upd: Vec<scan::Filehash>, del: Vec<String>) -> Result<(), Box<dyn Error>> {
+    let tx = db.transaction()?;
+
+    for i in ins {
+        tx.execute("INSERT INTO files (filename, sha512) VALUES (?1, ?2);", [i.file, i.hash])?;
+    }
+
+    for u in upd {
+        tx.execute("UPDATE files SET sha512=?1 WHERE filename=?2;", [u.hash, u.file])?;
+    }
+
+    for d in del {
+        tx.execute("DELETE FROM files WHERE filename=?1", [d])?;
+    }
+
+    tx.commit()?;
+    Ok(())
 }
