@@ -2,7 +2,7 @@ use crate::constants;
 
 pub fn show_usage() {
     show_version();
-    println!("Usage: {} [-D|--debug] -c <config>|--config=<config> [-h|--help] [-v|--version] [-q|--quiet] /path/to/html
+    println!("Usage: {} [-D|--debug] -c <config>|--config=<config> [-h|--help] [-p|--purge] [-v|--version] [-q|--quiet] /path/to/html
 
     -D          Enable debug output
     --debug
@@ -12,6 +12,9 @@ pub fn show_usage() {
 
     -h                  This text
     --help
+
+    -p                  Purge files found in the database but no
+    --purge             longer present in the filesystem
 
     -v                  Show version information
     --version

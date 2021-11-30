@@ -1,7 +1,8 @@
 use crate::constants;
 use crate::scan;
 use log::info;
-use rusqlite;
+use rusqlite::Result;
+use std::collections::HashSet;
 use std::error::Error;
 use std::fs;
 
@@ -24,6 +25,17 @@ pub fn open(f: &str) -> Result<rusqlite::Connection, Box<dyn Error>> {
     Ok(db)
 }
 
+pub fn get_all_files(db: &rusqlite::Connection) -> Result<HashSet<String>, Box<dyn Error>> {
+    let mut result = HashSet::<String>::new();
+    let mut statement = db.prepare("SELECT filename FROM files;")?;
+    let mut result_iter = statement.query([])?;
+
+    while let Some(row) = result_iter.next()? {
+        result.insert(row.get(0)?);
+    }
+
+    Ok(result)
+}
 
 pub fn file_sha512_from_db(db: &rusqlite::Connection, f: &str) -> Result<String, Box<dyn Error>> {
     let count: u64 = db.query_row("SELECT COUNT(sha512) FROM files WHERE filename=:fname;", &[(":fname", f)], |row| row.get(0))?;

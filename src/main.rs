@@ -17,10 +17,12 @@ fn main() {
     let argv: Vec<String> = env::args().collect();
     let mut options = Options::new();
     let mut log_level = log::LevelFilter::Info;
+    let mut purge_old = false;
 
     options.optflag("D", "debug", "Enable debug output");
     options.optopt("c", "config", "Path to configuration file", "config_file");
     options.optflag("h", "help", "Show help text");
+    options.optflag("p", "purge", "Remove stale database entries");
     options.optflag("v", "version", "Show version information");
     options.optflag("q", "--quiet", "Quiet operation");
 
@@ -49,7 +51,11 @@ fn main() {
     if opts.opt_present("D") {
         log_level = log::LevelFilter::Debug;
     }
-    
+
+    if opts.opt_present("p") {
+        purge_old = true;
+    };
+
     let config_file = match opts.opt_str("c") {
         Some(v) => v,
         None => {
@@ -116,7 +122,7 @@ fn main() {
         }
     };
 
-    let indexnow = match scan::build_update_list(&html_dir, &mut db_handle, fext_list) {
+    let indexnow = match scan::build_update_list(&html_dir, &mut db_handle, fext_list, purge_old) {
         Ok(v) => v,
         Err(e) => {
             error!("Unable to build file list: {}", e);

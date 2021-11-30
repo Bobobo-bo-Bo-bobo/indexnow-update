@@ -24,12 +24,11 @@ impl std::fmt::Debug for Filehash {
     }
 }
 
-pub fn build_update_list(p: &str, db: &mut rusqlite::Connection, extlist: Vec<String>) -> Result<Vec<String>, Box<dyn Error>> {
+pub fn build_update_list(p: &str, db: &mut rusqlite::Connection, extlist: Vec<String>, purge: bool) -> Result<Vec<String>, Box<dyn Error>> {
     let mut result = Vec::<String>::new();
     let mut inserts = Vec::<Filehash>::new();
     let mut deletes = Vec::<String>::new();
     let mut updates = Vec::<Filehash>::new();
-    let mut db_files = HashSet::<String>::new();
     let mut seen_files = HashSet::<String>::new();
 
     debug!("Scanning files in {}", p);
@@ -133,6 +132,15 @@ pub fn build_update_list(p: &str, db: &mut rusqlite::Connection, extlist: Vec<St
         }
 
         debug!("File {} has not changed DB:{} == FILE:{}", fname, sha512_from_db, sha512_from_file);
+    }
+
+    if purge {
+        debug!("Purge option found, getting list of files from database");
+        let files_from_db = sqlite3::get_all_files(db)?;
+        let purge_list = files_from_db.difference(&seen_files);
+        for p in purge_list {
+            deletes.push(p.to_string());
+        }
     }
 
     info!("Updating database: {} inserts, {} updates, {} deletions", inserts.len(), updates.len(), deletes.len());
