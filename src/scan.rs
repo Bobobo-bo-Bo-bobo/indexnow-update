@@ -1,13 +1,12 @@
 use crate::sqlite3;
 
 use log::{debug, error, info, warn};
+use sha2::{Digest, Sha512};
 use std::collections::HashSet;
 use std::error::Error;
 use std::fmt;
 use std::fs;
 use std::path::Path;
-use rusqlite;
-use sha2::{Digest, Sha512};
 use walkdir::WalkDir;
 
 pub struct Filehash {
@@ -18,13 +17,18 @@ pub struct Filehash {
 impl std::fmt::Debug for Filehash {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.debug_struct("Filehash")
-        .field("file", &self.file)
-        .field("hash", &self.hash)
-        .finish()
+            .field("file", &self.file)
+            .field("hash", &self.hash)
+            .finish()
     }
 }
 
-pub fn build_update_list(p: &str, db: &mut rusqlite::Connection, extlist: Vec<String>, purge: bool) -> Result<Vec<String>, Box<dyn Error>> {
+pub fn build_update_list(
+    p: &str,
+    db: &mut rusqlite::Connection,
+    extlist: Vec<String>,
+    purge: bool,
+) -> Result<Vec<String>, Box<dyn Error>> {
     let mut result = Vec::<String>::new();
     let mut inserts = Vec::<Filehash>::new();
     let mut deletes = Vec::<String>::new();
@@ -44,7 +48,11 @@ pub fn build_update_list(p: &str, db: &mut rusqlite::Connection, extlist: Vec<St
         let meta = match fs_obj.metadata() {
             Ok(v) => v,
             Err(e) => {
-                warn!("Unable to read metadata for {}: {} - skipping", fs_obj.path().display(), e);
+                warn!(
+                    "Unable to read metadata for {}: {} - skipping",
+                    fs_obj.path().display(),
+                    e
+                );
                 continue;
             }
         };
@@ -61,10 +69,18 @@ pub fn build_update_list(p: &str, db: &mut rusqlite::Connection, extlist: Vec<St
         // Matches extension?
         debug!("Processing {}", fs_obj.path().display());
         if !match_extension_list(fs_obj.path(), &extlist) {
-            debug!("Skipping {} because extension does not match the extension list {:?}", fs_obj.path().display(), extlist);
+            debug!(
+                "Skipping {} because extension does not match the extension list {:?}",
+                fs_obj.path().display(),
+                extlist
+            );
             continue;
         }
-        debug!("Extension of {} matches list of extensions {:?}", fs_obj.path().display(), extlist);
+        debug!(
+            "Extension of {} matches list of extensions {:?}",
+            fs_obj.path().display(),
+            extlist
+        );
 
         let fname = match fs_obj.path().to_str() {
             Some(v) => v,
@@ -80,22 +96,28 @@ pub fn build_update_list(p: &str, db: &mut rusqlite::Connection, extlist: Vec<St
             Err(e) => {
                 error!("Unable to query database: {}", e);
                 return Err(e);
-            },
+            }
         };
 
         // File not in database -> Generate sha512 hash add to insertion list and list for IndexNow
         if sha512_from_db.is_empty() {
-            debug!("SHA512 for {} not found in database, adding it to insertion list", fname);
+            debug!(
+                "SHA512 for {} not found in database, adding it to insertion list",
+                fname
+            );
             let sha512_from_file = match file_sha512_from_file(fname) {
                 Ok(v) => v,
                 Err(e) => {
                     warn!("Can't read {}: {} - skipping", fname, e);
                     continue;
-                },
+                }
             };
 
-            debug!("Calculated SHA512 hash of {} from file -> {}", fname, sha512_from_file);
-            let fhash = Filehash{
+            debug!(
+                "Calculated SHA512 hash of {} from file -> {}",
+                fname, sha512_from_file
+            );
+            let fhash = Filehash {
                 file: fname.to_string(),
                 hash: sha512_from_file,
             };
@@ -113,16 +135,22 @@ pub fn build_update_list(p: &str, db: &mut rusqlite::Connection, extlist: Vec<St
             Err(e) => {
                 warn!("Can't read {}: {} - skipping", fname, e);
                 continue;
-            },
+            }
         };
 
         seen_files.insert(fname.to_string());
 
-        debug!("Calculated SHA512 hash of {} from file -> {}", fname, sha512_from_file);
+        debug!(
+            "Calculated SHA512 hash of {} from file -> {}",
+            fname, sha512_from_file
+        );
         // File has changed, add it to update list for the database and IndexNow
         if sha512_from_db != sha512_from_file {
-            debug!("File {} has changed DB:{} != FILE:{} - adding it to update list", fname, sha512_from_db, sha512_from_file);
-            let fhash = Filehash{
+            debug!(
+                "File {} has changed DB:{} != FILE:{} - adding it to update list",
+                fname, sha512_from_db, sha512_from_file
+            );
+            let fhash = Filehash {
                 file: fname.to_string(),
                 hash: sha512_from_file,
             };
@@ -131,7 +159,10 @@ pub fn build_update_list(p: &str, db: &mut rusqlite::Connection, extlist: Vec<St
             continue;
         }
 
-        debug!("File {} has not changed DB:{} == FILE:{}", fname, sha512_from_db, sha512_from_file);
+        debug!(
+            "File {} has not changed DB:{} == FILE:{}",
+            fname, sha512_from_db, sha512_from_file
+        );
     }
 
     if purge {
@@ -143,7 +174,12 @@ pub fn build_update_list(p: &str, db: &mut rusqlite::Connection, extlist: Vec<St
         }
     }
 
-    info!("Updating database: {} inserts, {} updates, {} deletions", inserts.len(), updates.len(), deletes.len());
+    info!(
+        "Updating database: {} inserts, {} updates, {} deletions",
+        inserts.len(),
+        updates.len(),
+        deletes.len()
+    );
     sqlite3::db_update(db, inserts, updates, deletes)?;
     Ok(result)
 }
@@ -158,7 +194,7 @@ fn file_sha512_from_file(f: &str) -> Result<String, Box<dyn Error>> {
     Ok(hex::encode(hash))
 }
 
-pub fn match_extension_list(f: &std::path::Path, e: &Vec<String>) -> bool {
+pub fn match_extension_list(f: &std::path::Path, e: &[String]) -> bool {
     let _fext = match Path::extension(f) {
         Some(v) => v,
         None => return false,
@@ -174,5 +210,5 @@ pub fn match_extension_list(f: &std::path::Path, e: &Vec<String>) -> bool {
         }
     }
 
-    return false;
+    false
 }

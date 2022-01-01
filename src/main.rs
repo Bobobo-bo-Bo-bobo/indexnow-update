@@ -1,14 +1,14 @@
 use getopts::Options;
-use log::{ debug, error, info };
+use log::{debug, error, info};
 use std::env;
 use std::process;
 
 mod config;
 mod constants;
 mod logging;
-mod usage;
 mod scan;
 mod sqlite3;
+mod usage;
 
 fn main() {
     let argv: Vec<String> = env::args().collect();
@@ -60,7 +60,7 @@ fn main() {
             println!();
             usage::show_usage();
             process::exit(1);
-        },
+        }
     };
 
     // Initialise logging via fern
@@ -87,7 +87,7 @@ fn main() {
     }
 
     let mut html_dir: String = opts.free[0].clone();
-    if !html_dir.ends_with("/") {
+    if !html_dir.ends_with('/') {
         html_dir = format!("{}/", html_dir);
     };
 
