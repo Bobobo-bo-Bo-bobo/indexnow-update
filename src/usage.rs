@@ -27,7 +27,7 @@ pub fn show_usage() {
 pub fn show_version() {
     println!(
         "{} version {}
-Copyright (C) 2021 by Andreas Maus <maus@ypbind.de>
+Copyright (C) 2021-2022 by Andreas Maus <maus@ypbind.de>
 This program comes with ABSOLUTELY NO WARRANTY.
     
 {} is distributed under the Terms of the GNU General

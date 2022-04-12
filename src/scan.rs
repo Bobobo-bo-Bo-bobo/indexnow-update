@@ -195,7 +195,7 @@ fn file_sha512_from_file(f: &str) -> Result<String, Box<dyn Error>> {
     Ok(hex::encode(hash))
 }
 
-pub fn match_extension_list(f: &std::path::Path, e: &Vec<String>) -> bool {
+pub fn match_extension_list(f: &std::path::Path, e: &[String]) -> bool {
     let _fext = match Path::extension(f) {
         Some(v) => v,
         None => return false,
@@ -211,5 +211,5 @@ pub fn match_extension_list(f: &std::path::Path, e: &Vec<String>) -> bool {
         }
     }
 
-    return false;
+    false
 }

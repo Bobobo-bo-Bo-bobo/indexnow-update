@@ -7,10 +7,7 @@ use std::error::Error;
 use std::fs;
 
 pub fn open(f: &str) -> Result<rusqlite::Connection, Box<dyn Error>> {
-    let exists = match fs::metadata(f) {
-        Ok(_) => true,
-        Err(_) => false,
-    };
+    let exists = fs::metadata(f).is_ok();
 
     let db = match rusqlite::Connection::open(f) {
         Ok(v) => v,
