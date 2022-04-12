@@ -26,11 +26,15 @@ pub fn show_usage() {
 
 pub fn show_version() {
     println!(
-    "{} version {}
+        "{} version {}
 Copyright (C) 2021 by Andreas Maus <maus@ypbind.de>
 This program comes with ABSOLUTELY NO WARRANTY.
     
 {} is distributed under the Terms of the GNU General
 Public License Version 3. (http://www.gnu.org/copyleft/gpl.html)
-", constants::NAME, constants::VERSION, constants::NAME);
+",
+        constants::NAME,
+        constants::VERSION,
+        constants::NAME
+    );
 }

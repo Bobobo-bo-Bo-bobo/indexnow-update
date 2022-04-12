@@ -1,14 +1,18 @@
+#[macro_use]
+extern crate simple_error;
+
 use getopts::Options;
-use log::{ debug, error, info };
+use log::{debug, error, info};
 use std::env;
 use std::process;
 
 mod config;
 mod constants;
 mod logging;
-mod usage;
+mod payload;
 mod scan;
 mod sqlite3;
+mod usage;
 
 fn main() {
     let argv: Vec<String> = env::args().collect();
@@ -60,7 +64,7 @@ fn main() {
             println!();
             usage::show_usage();
             process::exit(1);
-        },
+        }
     };
 
     // Initialise logging via fern
@@ -87,9 +91,10 @@ fn main() {
     }
 
     let mut html_dir: String = opts.free[0].clone();
-    if !html_dir.ends_with("/") {
-        html_dir = format!("{}/", html_dir);
-    };
+    while html_dir.ends_with('/') {
+        html_dir.pop();
+    }
+    html_dir.push('/');
 
     debug!("HTML data directory is at {}", html_dir);
     info!("Parsing configuration file {}", config_file);
@@ -102,14 +107,6 @@ fn main() {
     };
 
     debug!("Parsed configuration: {:?}", config);
-    let fext_list = match config.file_extensions {
-        Some(v) => v,
-        None => {
-            error!("List of file extensions is empty");
-            process::exit(1);
-        }
-    };
-
     debug!("Opening database connection to {}", config.database);
     let mut db_handle = match sqlite3::open(&config.database) {
         Ok(v) => v,
@@ -119,12 +116,25 @@ fn main() {
         }
     };
 
-    let indexnow = match scan::build_update_list(&html_dir, &mut db_handle, fext_list, purge_old) {
-        Ok(v) => v,
-        Err(e) => {
-            error!("Unable to build file list: {}", e);
-            process::exit(1);
+    if let Some(fext_list) = config.file_extensions.clone() {
+        let _indexnow =
+            match scan::build_update_list(&html_dir, &mut db_handle, fext_list, purge_old) {
+                Ok(v) => v,
+                Err(e) => {
+                    error!("Unable to build file list: {}", e);
+                    process::exit(1);
+                }
+            };
+        if _indexnow.is_empty() {
+            info!("List of updated files is empty");
+            process::exit(0);
         }
-    };
-    println!("> {:?}", indexnow);
+
+        let indexnow = payload::massage_payload(&config.base_url, &html_dir, _indexnow);
+        println!("> {:?}", indexnow);
+        payload::process_payload(config, indexnow);
+    } else {
+        error!("List of file extensions is empty");
+        process::exit(1);
+    }
 }
