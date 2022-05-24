@@ -6,45 +6,17 @@ use std::fmt;
 use std::fs;
 use url::Url;
 
-#[derive(Serialize, Clone, Deserialize)]
+#[derive(Clone, Debug, Deserialize)]
 pub struct Configuration {
     pub database: String,
     pub file_extensions: Option<Vec<String>>,
     pub exclude: Option<Vec<String>>,
     pub base_url: String,
-    pub engines: HashMap<String, EngineConfiguration>,
+    pub submit: String,
+    pub key: String,
+    pub key_location: Option<String>,
     #[serde(skip)]
     pub host: String,
-}
-
-#[derive(Serialize, Clone, Deserialize)]
-pub struct EngineConfiguration {
-    pub indexnow_url: String,
-    pub key_value: String,
-    pub key_url: String,
-}
-
-impl std::fmt::Debug for Configuration {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        f.debug_struct("Configuration")
-            .field("database", &self.database)
-            .field("exclude", &self.exclude)
-            .field("file_extensions", &self.file_extensions)
-            .field("base_url", &self.base_url)
-            .field("host", &self.host)
-            .field("engines", &self.engines)
-            .finish()
-    }
-}
-
-impl std::fmt::Debug for EngineConfiguration {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        f.debug_struct("EngineConfiguration")
-            .field("indexnow_url", &self.indexnow_url)
-            .field("key_value", &self.key_value)
-            .field("key_url", &self.key_url)
-            .finish()
-    }
 }
 
 pub fn parse_config_file(f: &str) -> Result<Configuration, Box<dyn Error>> {

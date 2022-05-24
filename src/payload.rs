@@ -6,25 +6,24 @@ use serde::Serialize;
 use std::error::Error;
 
 #[derive(Serialize, Clone, Debug)]
-pub struct Payload {
+struct IndexNowData {
     pub host: String,
     pub key: String,
     #[serde(rename = "keyLocation")]
-    pub key_location: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub key_location: Option<String>,
     #[serde(rename = "urlList")]
     pub url_list: Vec<String>,
 }
 
 fn build_post_payload(
-    index_now_host: &str,
-    index_now_key: &str,
-    index_now_key_location: &str,
+    cfg: &config::Configuration,
     list: Vec<String>,
 ) -> Result<String, Box<dyn Error>> {
-    let raw_payload = Payload {
-        host: index_now_host.to_string(),
-        key: index_now_key.to_string(),
-        key_location: index_now_key_location.to_string(),
+    let raw_payload = IndexNowData {
+        host: cfg.host.clone(),
+        key: cfg.key.clone(),
+        key_location: cfg.key_location.clone(),
         url_list: list,
     };
     let payload = serde_json::to_string(&raw_payload)?;
@@ -45,19 +44,10 @@ pub fn process_payload(cfg: config::Configuration, list: Vec<String>) {
     let remain = list.len() % constants::BATCH_SIZE;
     debug!("List contains {} elements, {} iterations with fill batch size of {} + {} remaining elements", list.len(), iter, constants::BATCH_SIZE, remain);
 
-    let engines = cfg.engines.clone();
-    for (engine, engine_data) in engines {
-        info!("Submitting data to {}", engine);
-        if iter > 0 {
-            // XXX
-        }
-        let payload = build_post_payload(
-            &cfg.host,
-            &engine_data.key_value,
-            &engine_data.key_url,
-            list[iter * constants::BATCH_SIZE..].to_vec(),
-        )
-        .unwrap();
-        debug!("-> {}", payload);
+    info!("Submitting data to {}", cfg.submit);
+    if iter > 0 {
+        // XXX
     }
+    let payload = build_post_payload(&cfg, list[iter * constants::BATCH_SIZE..].to_vec()).unwrap();
+    debug!("-> {}", payload);
 }

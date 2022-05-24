@@ -5,12 +5,11 @@ file_extensions:
     - 'html'
     - 'txt'
 base_url: https://www.example.com
-engines:
-  bing.com:
-    indexnow_url: https://bing.com/indexnow
-    key_value: <key>
-    key_url: <key>
-  yandex.ru:
-    indexnow_url: https://yandex.ru/indexnow
-    key_value: <key>
-    key_url: <key>
+# Note: "Search engines adopting the IndexNow protocol agree that submitted URLs will be automatically shared with all other participating search engines."
+# Source: https://www.indexnow.org/documentation
+#
+# At the time of writing IndexNow participants are:
+#  - https://www.bing.com/indexnow
+#  - https://yandex.com/indexnow
+#  - https://search.seznam.cz/indexnow
+submit: https://yandex.com/indexnow

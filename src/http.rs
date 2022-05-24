@@ -7,15 +7,6 @@ use std::error::Error;
 use std::net::ToSocketAddrs;
 use std::time::Duration;
 
-struct IndexNowData {
-    pub host: String,
-    pub key: String,
-    #[serde(rename = "keyLocation")]
-    pub key_location: Option<String>,
-    #[serde(rename = "urlList")]
-    pub url_list: Vec<String>,
-}
-
 pub fn build_client(timeout_sec: u64) -> Result<reqwest::blocking::Client, Box<dyn Error>> {
     let timeout = Duration::from_secs(timeout_sec);
     let mut headers = reqwest::header::HeaderMap::new();
