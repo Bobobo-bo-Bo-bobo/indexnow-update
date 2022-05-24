@@ -1,6 +1,3 @@
-#[macro_use]
-extern crate simple_error;
-
 use getopts::Options;
 use log::{debug, error, info};
 use std::env;
@@ -133,7 +130,13 @@ fn main() {
 
         let indexnow = payload::massage_payload(&config.base_url, &html_dir, _indexnow);
         println!("> {:?}", indexnow);
-        payload::process_payload(config, indexnow);
+        match payload::process_payload(config, indexnow) {
+            Ok(_) => {}
+            Err(e) => {
+                error!("Submission failed: {}", e);
+                process::exit(1);
+            }
+        };
     } else {
         error!("List of file extensions is empty");
         process::exit(1);

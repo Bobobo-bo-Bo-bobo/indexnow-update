@@ -6,6 +6,7 @@ pub const SQLITE3_SCHEMA: &str = "CREATE TABLE \"files\" (
     sha512 VARCHAR(128)
 );";
 pub const BATCH_SIZE: usize = 9000;
+pub const DEFAULT_TIMEOUT: u64 = 300;
 
 pub fn generate_user_agent() -> String {
     format!("{}/{} ({})", NAME, VERSION, REPO)

@@ -1,10 +1,9 @@
-use crate::config;
 use crate::constants;
-use crate::payload;
 
-use log::{debug, info};
+use log::debug;
+use reqwest::StatusCode;
+use simple_error::bail;
 use std::error::Error;
-use std::net::ToSocketAddrs;
 use std::time::Duration;
 
 pub fn build_client(timeout_sec: u64) -> Result<reqwest::blocking::Client, Box<dyn Error>> {
@@ -33,21 +32,31 @@ pub fn build_client(timeout_sec: u64) -> Result<reqwest::blocking::Client, Box<d
 }
 
 pub fn post(
-    cfg: &config::Configuration,
     http_client: &mut reqwest::blocking::Client,
     url: &str,
-    list: Vec<String>,
+    data: String,
 ) -> Result<(), Box<dyn Error>> {
-    debug!("POST {}", &url);
-
-    /*    let post_payload = IndexNowData{
-        host: config.host,
-        key:
+    debug!("Sending HTTP POST request to {}", &url);
+    let response = http_client.post(url).body(data).send()?;
+    match response.status() {
+        StatusCode::OK | StatusCode::ACCEPTED => Ok(()),
+        StatusCode::BAD_REQUEST => {
+            bail!("invalid format");
+        }
+        StatusCode::FORBIDDEN => {
+            bail!("key not valid, e.g. key not found, file found but key not in the file");
+        }
+        StatusCode::UNPROCESSABLE_ENTITY => {
+            bail!("URLs which don’t belong to the host or the key is not matching the schema in the protocol");
+        }
+        StatusCode::TOO_MANY_REQUESTS => {
+            bail!("too many requests (potential Spam)")
+        }
+        _ => {
+            let reason = response.status().canonical_reason().unwrap_or("???");
+            bail!("unexpected HTTP status {} {}", response.status(), reason);
+        }
     }
-    */
-    //    let payload = payload::
-    //    let reply = http_client.post(url).
-    Ok(())
 }
 
 /*

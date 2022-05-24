@@ -1,8 +1,6 @@
-use serde::{Deserialize, Serialize};
-use serde_yaml;
-use std::collections::HashMap;
+use serde::Deserialize;
+use simple_error::bail;
 use std::error::Error;
-use std::fmt;
 use std::fs;
 use url::Url;
 
@@ -21,7 +19,7 @@ pub struct Configuration {
 
 pub fn parse_config_file(f: &str) -> Result<Configuration, Box<dyn Error>> {
     let raw = fs::read_to_string(f)?;
-    let mut result: Configuration = match serde_yaml::from_str(&raw.as_str()) {
+    let mut result: Configuration = match serde_yaml::from_str(raw.as_str()) {
         Ok(v) => v,
         Err(e) => return Err(Box::new(e)),
     };

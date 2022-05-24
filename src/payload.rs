@@ -1,5 +1,6 @@
 use crate::config;
 use crate::constants;
+use crate::http;
 
 use log::{debug, info};
 use serde::Serialize;
@@ -38,7 +39,10 @@ pub fn massage_payload(base_url: &str, html_dir: &str, list: Vec<String>) -> Vec
     result
 }
 
-pub fn process_payload(cfg: config::Configuration, list: Vec<String>) {
+pub fn process_payload(
+    cfg: config::Configuration,
+    list: Vec<String>,
+) -> Result<(), Box<dyn Error>> {
     // The list of URLs per submit is limited to 10000 - https://www.indexnow.org/documentation
     let iter = list.len() / constants::BATCH_SIZE;
     let remain = list.len() % constants::BATCH_SIZE;
@@ -50,4 +54,7 @@ pub fn process_payload(cfg: config::Configuration, list: Vec<String>) {
     }
     let payload = build_post_payload(&cfg, list[iter * constants::BATCH_SIZE..].to_vec()).unwrap();
     debug!("-> {}", payload);
+    let mut http_client = http::build_client(constants::DEFAULT_TIMEOUT)?;
+    http::post(&mut http_client, &cfg.submit, payload)?;
+    Ok(())
 }

@@ -1,7 +1,6 @@
 use crate::sqlite3;
 
 use log::{debug, error, info, warn};
-use rusqlite;
 use sha2::{Digest, Sha512};
 use std::collections::HashSet;
 use std::error::Error;
