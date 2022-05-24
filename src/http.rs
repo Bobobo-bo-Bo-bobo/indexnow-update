@@ -1,11 +1,20 @@
 use crate::config;
 use crate::constants;
-use crate::exporter;
+use crate::payload;
 
 use log::{debug, info};
 use std::error::Error;
 use std::net::ToSocketAddrs;
 use std::time::Duration;
+
+struct IndexNowData {
+    pub host: String,
+    pub key: String,
+    #[serde(rename = "keyLocation")]
+    pub key_location: Option<String>,
+    #[serde(rename = "urlList")]
+    pub url_list: Vec<String>,
+}
 
 pub fn build_client(timeout_sec: u64) -> Result<reqwest::blocking::Client, Box<dyn Error>> {
     let timeout = Duration::from_secs(timeout_sec);
@@ -20,7 +29,7 @@ pub fn build_client(timeout_sec: u64) -> Result<reqwest::blocking::Client, Box<d
     );
 
     let http_client_builder = reqwest::blocking::ClientBuilder::new()
-        .user_agent(constants::generate_default_user_agent())
+        .user_agent(constants::generate_user_agent())
         .default_headers(headers)
         .timeout(timeout);
 
@@ -33,16 +42,24 @@ pub fn build_client(timeout_sec: u64) -> Result<reqwest::blocking::Client, Box<d
 }
 
 pub fn post(
+    cfg: &config::Configuration,
     http_client: &mut reqwest::blocking::Client,
     url: &str,
     list: Vec<String>,
 ) -> Result<(), Box<dyn Error>> {
     debug!("POST {}", &url);
-    // let payload = 
-    let reply = http_client.post(url).
+
+    /*    let post_payload = IndexNowData{
+        host: config.host,
+        key:
+    }
+    */
+    //    let payload = payload::
+    //    let reply = http_client.post(url).
     Ok(())
 }
 
+/*
 pub fn get(
     http_client: &mut reqwest::blocking::Client,
     url: &str,
@@ -60,3 +77,4 @@ pub fn get(
     let reply = response.text()?;
     Ok(reply)
 }
+*/

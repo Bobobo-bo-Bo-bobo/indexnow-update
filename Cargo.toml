@@ -12,6 +12,7 @@ fern = "0.6.0"
 getopts = "0.2.21"
 hex = "0.4.3"
 log = "0.4.16"
+regex = "1.5.6"
 reqwest = { version = "0.11.10", features = ["blocking", "json", "native-tls"] }
 rusqlite = "0.27.0"
 serde = { version = "1.0.136", features = ["derive"] }

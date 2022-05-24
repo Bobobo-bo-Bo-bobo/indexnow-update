@@ -8,6 +8,7 @@ use std::process;
 
 mod config;
 mod constants;
+mod http;
 mod logging;
 mod payload;
 mod scan;

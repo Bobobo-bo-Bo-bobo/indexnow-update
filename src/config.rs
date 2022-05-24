@@ -10,6 +10,7 @@ use url::Url;
 pub struct Configuration {
     pub database: String,
     pub file_extensions: Option<Vec<String>>,
+    pub exclude: Option<Vec<String>>,
     pub base_url: String,
     pub engines: HashMap<String, EngineConfiguration>,
     #[serde(skip)]
@@ -27,6 +28,7 @@ impl std::fmt::Debug for Configuration {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.debug_struct("Configuration")
             .field("database", &self.database)
+            .field("exclude", &self.exclude)
             .field("file_extensions", &self.file_extensions)
             .field("base_url", &self.base_url)
             .field("host", &self.host)
