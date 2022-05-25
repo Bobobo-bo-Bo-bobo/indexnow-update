@@ -52,7 +52,7 @@ pub fn remove_excludes(excludes: &[regex::Regex], list: &[String]) -> Vec<String
     let mut trimmed: Vec<String> = Vec::new();
     for re in excludes {
         for entry in list {
-            if !re.is_match(entry) {
+            if re.is_match(entry) {
                 debug!("Rmoving '{}' because it matches '{:?}'", entry, re);
             } else {
                 trimmed.push(entry.to_string());
