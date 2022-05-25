@@ -17,6 +17,10 @@ pub fn build_client(timeout_sec: u64) -> Result<reqwest::blocking::Client, Box<d
         "Accept",
         reqwest::header::HeaderValue::from_static("application/json"),
     );
+    headers.insert(
+        "Content-Type",
+        reqwest::header::HeaderValue::from_static("application/json; charset=utf-8"),
+    );
 
     let http_client_builder = reqwest::blocking::ClientBuilder::new()
         .user_agent(constants::generate_user_agent())
