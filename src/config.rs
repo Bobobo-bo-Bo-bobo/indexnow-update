@@ -1,3 +1,4 @@
+use regex::Regex;
 use serde::Deserialize;
 use simple_error::bail;
 use std::error::Error;
@@ -15,6 +16,8 @@ pub struct Configuration {
     pub key_location: Option<String>,
     #[serde(skip)]
     pub host: String,
+    #[serde(skip)]
+    pub exclude_list: Vec<Regex>,
 }
 
 pub fn parse_config_file(f: &str) -> Result<Configuration, Box<dyn Error>> {
@@ -36,5 +39,16 @@ pub fn parse_config_file(f: &str) -> Result<Configuration, Box<dyn Error>> {
             bail!("Can't extract hostname from base_url {}", result.base_url);
         }
     };
+    if let Some(excl) = &result.exclude {
+        for rxp in excl {
+            let re = match Regex::new(rxp) {
+                Ok(v) => v,
+                Err(e) => {
+                    bail!("Can't parse {} as regular expression: {}", rxp, e);
+                }
+            };
+            result.exclude_list.push(re);
+        }
+    }
     Ok(result)
 }
