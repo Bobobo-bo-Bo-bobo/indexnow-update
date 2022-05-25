@@ -134,6 +134,7 @@ fn main() {
             process::exit(0);
         }
 
+        let _indexnow = payload::remove_excludes(&config.exclude_list, &_indexnow);
         let indexnow = payload::massage_payload(&config.base_url, &html_dir, _indexnow);
         match payload::process_payload(config, indexnow, dry_run) {
             Ok(_) => {}

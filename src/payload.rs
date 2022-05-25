@@ -48,6 +48,21 @@ pub fn massage_payload(base_url: &str, html_dir: &str, list: Vec<String>) -> Vec
     result
 }
 
+pub fn remove_excludes(excludes: &[regex::Regex], list: &[String]) -> Vec<String> {
+    let mut trimmed: Vec<String> = Vec::new();
+    for re in excludes {
+        for entry in list {
+            if !re.is_match(entry) {
+                debug!("Rmoving '{}' because it matches '{:?}'", entry, re);
+            } else {
+                trimmed.push(entry.to_string());
+            }
+        }
+    }
+
+    trimmed
+}
+
 pub fn process_payload(
     cfg: config::Configuration,
     list: Vec<String>,
@@ -58,7 +73,6 @@ pub fn process_payload(
     let remain = list.len() % constants::BATCH_SIZE;
     debug!("List contains {} elements, {} iterations with fill batch size of {} + {} remaining elements", list.len(), iter, constants::BATCH_SIZE, remain);
 
-    info!("Submitting data to {}", cfg.submit);
     if iter > 0 {
         // XXX
     }
@@ -73,6 +87,7 @@ pub fn process_payload(
             cfg.submit, dumped
         );
     } else {
+        info!("Submitting data to {}", cfg.submit);
         let payload =
             build_post_payload(&cfg, list[iter * constants::BATCH_SIZE..].to_vec()).unwrap();
         let mut http_client = http::build_client(constants::DEFAULT_TIMEOUT)?;
