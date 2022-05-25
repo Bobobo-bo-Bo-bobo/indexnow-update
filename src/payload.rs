@@ -76,9 +76,27 @@ pub fn process_payload(
     let iter = list.len() / constants::BATCH_SIZE;
     let remain = list.len() % constants::BATCH_SIZE;
     debug!("List contains {} elements, {} iterations with fill batch size of {} + {} remaining elements", list.len(), iter, constants::BATCH_SIZE, remain);
-
-    if iter > 0 {
-        // XXX
+    for i in 0..iter {
+        // send full batch
+        if dry_run {
+            let dumped = serde_json::to_string_pretty(&build_dump_payload(
+                &cfg,
+                list[i * constants::BATCH_SIZE..(i + 1) * constants::BATCH_SIZE].to_vec(),
+            ))?;
+            info!(
+                "Would send data using HTTP POST to {}:\n{}",
+                cfg.submit, dumped
+            );
+        } else {
+            info!("Submitting data to {}", cfg.submit);
+            let payload = build_post_payload(
+                &cfg,
+                list[i * constants::BATCH_SIZE..(i + 1) * constants::BATCH_SIZE].to_vec(),
+            )
+            .unwrap();
+            let mut http_client = http::build_client(constants::DEFAULT_TIMEOUT)?;
+            http::post(&mut http_client, &cfg.submit, payload)?;
+        }
     }
 
     if dry_run {
