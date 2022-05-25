@@ -17,10 +17,12 @@ fn main() {
     let mut options = Options::new();
     let mut log_level = log::LevelFilter::Info;
     let mut purge_old = false;
+    let mut dry_run = false;
 
     options.optflag("D", "debug", "Enable debug output");
     options.optopt("c", "config", "Path to configuration file", "config_file");
     options.optflag("h", "help", "Show help text");
+    options.optflag("n", "dry-run", "Dry run mode");
     options.optflag("p", "purge", "Remove stale database entries");
     options.optflag("v", "version", "Show version information");
     options.optflag("q", "--quiet", "Quiet operation");
@@ -54,6 +56,10 @@ fn main() {
     if opts.opt_present("p") {
         purge_old = true;
     };
+
+    if opts.opt_present("n") {
+        dry_run = true;
+    }
 
     let config_file = match opts.opt_str("c") {
         Some(v) => v,
@@ -129,8 +135,7 @@ fn main() {
         }
 
         let indexnow = payload::massage_payload(&config.base_url, &html_dir, _indexnow);
-        println!("> {:?}", indexnow);
-        match payload::process_payload(config, indexnow) {
+        match payload::process_payload(config, indexnow, dry_run) {
             Ok(_) => {}
             Err(e) => {
                 error!("Submission failed: {}", e);

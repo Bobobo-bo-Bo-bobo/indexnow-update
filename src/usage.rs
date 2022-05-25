@@ -2,7 +2,7 @@ use crate::constants;
 
 pub fn show_usage() {
     show_version();
-    println!("Usage: {} [-D|--debug] -c <config>|--config=<config> [-h|--help] [-p|--purge] [-v|--version] [-q|--quiet] /path/to/html
+    println!("Usage: {} [-D|--debug] -c <config>|--config=<config> [-h|--help] [-n|--dry-run] [-p|--purge] [-v|--version] [-q|--quiet] /path/to/html
 
     -D          Enable debug output
     --debug
@@ -12,6 +12,9 @@ pub fn show_usage() {
 
     -h                  This text
     --help
+
+    -n                  Process data but print what whould be submitted instead
+    --dry-run           submitting it
 
     -p                  Purge files found in the database but no
     --purge             longer present in the filesystem
@@ -29,7 +32,7 @@ pub fn show_version() {
         "{} version {}
 Copyright (C) 2021-2022 by Andreas Maus <maus@ypbind.de>
 This program comes with ABSOLUTELY NO WARRANTY.
-    
+
 {} is distributed under the Terms of the GNU General
 Public License Version 3. (http://www.gnu.org/copyleft/gpl.html)
 ",

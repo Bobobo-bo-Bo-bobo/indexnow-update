@@ -31,6 +31,15 @@ fn build_post_payload(
     Ok(payload)
 }
 
+fn build_dump_payload(cfg: &config::Configuration, list: Vec<String>) -> IndexNowData {
+    IndexNowData {
+        host: cfg.host.clone(),
+        key: cfg.key.clone(),
+        key_location: cfg.key_location.clone(),
+        url_list: list,
+    }
+}
+
 pub fn massage_payload(base_url: &str, html_dir: &str, list: Vec<String>) -> Vec<String> {
     let mut result = Vec::<String>::new();
     for entry in list {
@@ -42,6 +51,7 @@ pub fn massage_payload(base_url: &str, html_dir: &str, list: Vec<String>) -> Vec
 pub fn process_payload(
     cfg: config::Configuration,
     list: Vec<String>,
+    dry_run: bool,
 ) -> Result<(), Box<dyn Error>> {
     // The list of URLs per submit is limited to 10000 - https://www.indexnow.org/documentation
     let iter = list.len() / constants::BATCH_SIZE;
@@ -52,9 +62,21 @@ pub fn process_payload(
     if iter > 0 {
         // XXX
     }
-    let payload = build_post_payload(&cfg, list[iter * constants::BATCH_SIZE..].to_vec()).unwrap();
-    debug!("-> {}", payload);
-    let mut http_client = http::build_client(constants::DEFAULT_TIMEOUT)?;
-    http::post(&mut http_client, &cfg.submit, payload)?;
+
+    if dry_run {
+        let dumped = serde_json::to_string_pretty(&build_dump_payload(
+            &cfg,
+            list[iter * constants::BATCH_SIZE..].to_vec(),
+        ))?;
+        info!(
+            "Would send data using HTTP POST to {}:\n{}",
+            cfg.submit, dumped
+        );
+    } else {
+        let payload =
+            build_post_payload(&cfg, list[iter * constants::BATCH_SIZE..].to_vec()).unwrap();
+        let mut http_client = http::build_client(constants::DEFAULT_TIMEOUT)?;
+        http::post(&mut http_client, &cfg.submit, payload)?;
+    }
     Ok(())
 }
