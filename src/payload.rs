@@ -49,17 +49,21 @@ pub fn massage_payload(base_url: &str, html_dir: &str, list: Vec<String>) -> Vec
 }
 
 pub fn remove_excludes(excludes: &[regex::Regex], list: &[String]) -> Vec<String> {
-    let mut trimmed: Vec<String> = Vec::new();
-    for re in excludes {
-        for entry in list {
+    let mut trimmed: Vec<String> = list.to_vec();
+
+    trimmed.retain(|entry| {
+        let mut exclude = false;
+        for re in excludes {
             if re.is_match(entry) {
                 debug!("Rmoving '{}' because it matches '{:?}'", entry, re);
-            } else {
-                trimmed.push(entry.to_string());
+                exclude = true;
+                break;
             }
         }
-    }
+        !exclude
+    });
 
+    debug!("List after removal of excludes: {:?}", trimmed);
     trimmed
 }
 
