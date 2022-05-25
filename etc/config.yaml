@@ -1,15 +1,27 @@
-database: /path/to/sqlite.db
+---
+# Base URL
+base_url: 'https://my.site/base/'
+
+# Database location
+database: '/path/to/sqlite.db'
+
+# List of regular expressions to exclude files from submit
+exclude:
+  - '^.*/private_path/.*$'
+# List of file extensions to add to database
 file_extensions:
     - 'md'
     - 'htm'
     - 'html'
     - 'txt'
-base_url: https://www.example.com
+
+# IndexNow key
+key: 'index_now_key'
+
+
+# URL of IndexNow key, see https://www.indexnow.org/documentation for deetails
+key_location: 'https://my.site/key.dat'
+
 # Note: "Search engines adopting the IndexNow protocol agree that submitted URLs will be automatically shared with all other participating search engines."
 # Source: https://www.indexnow.org/documentation
-#
-# At the time of writing IndexNow participants are:
-#  - https://www.bing.com/indexnow
-#  - https://yandex.com/indexnow
-#  - https://search.seznam.cz/indexnow
-submit: https://yandex.com/indexnow
+submit: 'https://yandex.com/indexnow'

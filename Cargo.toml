@@ -1,6 +1,6 @@
 [package]
 name = "indexnow-update"
-version = "0.1.0-20220525"
+version = "1.0.0"
 authors = ["Andreas Maus <maus@ypbind.de>"]
 edition = "2018"
 
