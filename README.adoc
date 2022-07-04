@@ -1,35 +1,47 @@
-# Repositories
+= indexnow-update
+:stylesheet: asciidoc.css
+
+== Repositories
+
 * Primary development repository: https://git.ypbind.de/cgit/indexnow-update/
 * Backup repository: https://github.com/Bobobo-bo-Bo-bobo/indexnow-update
 
-# Preface
-[IndexNow](https://indexnow.org) provides a way to notify several search engines about site changes.
+== Preface
 
-# Requirements
-## Build requirements
-As a Rust programm, a current stable Rust build environment is required.
-Aditionally the development file of `libssl` (to build the `reqwest` crate) and the development files of `libsqlite3` (to buld the `rusqlite` crate) are required.
+https://indexnow.org[IndexNow] provides a way to notify several search engines about site changes.
 
-## Runtime requirements
-`libssl`  and `libsqlite3` are required to run this programm.
+== Requirements
 
-# Usage
-## Command line parameters
+=== Build requirements
 
-| *Option* | *Parameter* | *Note* |
-|:---------|:------------|:-------|
-| `-D` / `--debug` | - | Show debug messages |
-| `-c <cfg>` / `--config=<cfg>` | Read configuration from `<cfg>` | **mandatory** |
-| `-h` / `--help` | - | Show help text |
-| `-n` / `--dry-run` | Process data but print what whould be submitted instead of submitting the data | |
-| `-p` / `--purge` | Purge files found in the database but no longer present in the filesystem | |
-| `-q` / `--quiet` | - | Quiet operation. Only warnings and errors are shown |
-| `-v` / `--version` | - | Show version information |
+As a Rust programm, a current stable Rust build environment is required. Aditionally the development file of `libssl` (to build the `reqwest` crate) and the development files of `libsqlite3` (to buld the `rusqlite` crate) are required.
 
-## Configuration file
+=== Runtime requirements
+
+`libssl` and `libsqlite3` are required to run this programm.
+
+== Usage
+
+=== Command line parameters
+
+[width="100%",cols="<34%,<41%,<25%",options="header",]
+|===
+|_Option_ |_Parameter_ |_Note_
+|`-D` / `--debug` |- |Show debug messages
+|`-c <cfg>` / `--config=<cfg>` |Read configuration from `<cfg>` |*mandatory*
+|`-h` / `--help` |- |Show help text
+|`-n` / `--dry-run` |Process data but print what whould be submitted instead of submitting the data |
+|`-p` / `--purge` |Purge files found in the database but no longer present in the filesystem |
+|`-q` / `--quiet` |- |Quiet operation. Only warnings and errors are shown
+|`-v` / `--version` |- |Show version information
+|===
+
+=== Configuration file
+
 The configuration file is expected in the YAML format, e.g.:
 
-```yaml
+[source,yaml]
+----
 ---
 # Base URL
 base_url: 'https://my.site/base/'
@@ -57,10 +69,11 @@ key_location: 'https://my.site/key.dat'
 # Note: "Search engines adopting the IndexNow protocol agree that submitted URLs will be automatically shared with all other participating search engines."
 # Source: https://www.indexnow.org/documentation
 submit: 'https://yandex.com/indexnow'
-```
+----
 
-# License
-```
+== License
+
+....
                     GNU GENERAL PUBLIC LICENSE
                        Version 3, 29 June 2007
 
@@ -735,4 +748,4 @@ may consider it more useful to permit linking proprietary applications with
 the library.  If this is what you want to do, use the GNU Lesser General
 Public License instead of this License.  But first, please read
 <http://www.gnu.org/philosophy/why-not-lgpl.html>.
-```
+....
