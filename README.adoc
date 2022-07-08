@@ -1,5 +1,7 @@
-= indexnow-update
+= indexnow-update - Scan and submit websites and subsequent changes to IndexNow
+:source-highlighter: pygments
 :stylesheet: asciidoc.css
+:toc: left
 
 == Repositories
 
@@ -14,11 +16,11 @@ https://indexnow.org[IndexNow] provides a way to notify several search engines a
 
 === Build requirements
 
-As a Rust programm, a current stable Rust build environment is required. Aditionally the development file of `libssl` (to build the `reqwest` crate) and the development files of `libsqlite3` (to buld the `rusqlite` crate) are required.
+As a Rust program, a current stable Rust build environment is required. Additionally the development file of `libssl` (to build the `reqwest` crate) and the development files of `libsqlite3` (to build the `rusqlite` crate) are required.
 
 === Runtime requirements
 
-`libssl` and `libsqlite3` are required to run this programm.
+`libssl` and `libsqlite3` are required to run this program.
 
 == Usage
 
@@ -30,7 +32,7 @@ As a Rust programm, a current stable Rust build environment is required. Adition
 |`-D` / `--debug` |- |Show debug messages
 |`-c <cfg>` / `--config=<cfg>` |Read configuration from `<cfg>` |*mandatory*
 |`-h` / `--help` |- |Show help text
-|`-n` / `--dry-run` |Process data but print what whould be submitted instead of submitting the data |
+|`-n` / `--dry-run` |Process data but print what would be submitted instead of submitting the data |
 |`-p` / `--purge` |Purge files found in the database but no longer present in the filesystem |
 |`-q` / `--quiet` |- |Quiet operation. Only warnings and errors are shown
 |`-v` / `--version` |- |Show version information
@@ -63,7 +65,7 @@ file_extensions:
 key: 'index_now_key'
 
 
-# URL of IndexNow key, see https://www.indexnow.org/documentation for deetails
+# URL of IndexNow key, see https://www.indexnow.org/documentation for details
 key_location: 'https://my.site/key.dat'
 
 # Note: "Search engines adopting the IndexNow protocol agree that submitted URLs will be automatically shared with all other participating search engines."
