@@ -1,5 +1,5 @@
 pub const NAME: &str = "indexnow-updater";
-pub const VERSION: &str = "1.0.0";
+pub const VERSION: &str = "1.0.1";
 pub const REPO: &str = "https://git.ypbind.de/cgit/indexnow-updater";
 pub const SQLITE3_SCHEMA: &str = "CREATE TABLE \"files\" (
     filename TEXT PRIMARY KEY,

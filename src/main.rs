@@ -122,7 +122,8 @@ fn main() {
 
     if let Some(fext_list) = config.file_extensions.clone() {
         let _indexnow =
-            match scan::build_update_list(&html_dir, &mut db_handle, fext_list, purge_old) {
+            match scan::build_update_list(&html_dir, &mut db_handle, fext_list, purge_old, dry_run)
+            {
                 Ok(v) => v,
                 Err(e) => {
                     error!("Unable to build file list: {}", e);

@@ -28,6 +28,7 @@ pub fn build_update_list(
     db: &mut rusqlite::Connection,
     extlist: Vec<String>,
     purge: bool,
+    dry_run: bool,
 ) -> Result<Vec<String>, Box<dyn Error>> {
     let mut result = Vec::<String>::new();
     let mut inserts = Vec::<Filehash>::new();
@@ -180,7 +181,9 @@ pub fn build_update_list(
         updates.len(),
         deletes.len()
     );
-    sqlite3::db_update(db, inserts, updates, deletes)?;
+    if !dry_run {
+        sqlite3::db_update(db, inserts, updates, deletes)?;
+    }
     Ok(result)
 }
 
