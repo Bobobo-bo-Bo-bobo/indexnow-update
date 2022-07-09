@@ -1,6 +1,6 @@
 [package]
 name = "indexnow-update"
-version = "1.0.0"
+version = "1.0.1"
 authors = ["Andreas Maus <maus@ypbind.de>"]
 edition = "2018"
 
@@ -12,12 +12,12 @@ fern = "0.6.1"
 getopts = "0.2.21"
 hex = "0.4.3"
 log = "0.4.17"
-regex = "1.5.6"
-reqwest = { version = "0.11.10", features = ["blocking", "json", "native-tls"] }
+regex = "1.6.0"
+reqwest = { version = "0.11.11", features = ["blocking", "json", "native-tls"] }
 rusqlite = "0.27.0"
-serde = { version = "1.0.137", features = ["derive"] }
-serde_json = "1.0.81"
-serde_yaml = "0.8.24"
+serde = { version = "1.0.138", features = ["derive"] }
+serde_json = "1.0.82"
+serde_yaml = "0.8.25"
 simple-error = "0.2.3"
 sha2 = "0.10.2"
 url = "2.2.2"
